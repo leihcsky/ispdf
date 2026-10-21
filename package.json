@@ -1,0 +1,29 @@
+{
+  "name": "resize-pdf",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "astro dev",
+    "build": "astro build",
+    "preview": "astro preview",
+    "verify:pdf": "tsx scripts/verify-pdf-resize.ts",
+    "icons": "node scripts/render-brand-icons.mjs"
+  },
+  "dependencies": {
+    "@astrojs/react": "^4.4.2",
+    "@astrojs/sitemap": "^3.6.0",
+    "@cantoo/pdf-lib": "^2.11.1",
+    "astro": "^5.15.2",
+    "react": "^19.2.0",
+    "react-dom": "^19.2.0"
+  },
+  "devDependencies": {
+    "@resvg/resvg-js": "^2.6.2",
+    "@types/react": "^19.2.2",
+    "@types/react-dom": "^19.2.2",
+    "pdfjs-dist": "^4.10.38",
+    "tsx": "^4.20.6",
+    "typescript": "^5.9.3"
+  }
+}

@@ -1,0 +1,80 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+
+const title = 'Privacy Policy – ispdf';
+const description =
+  'How ispdf handles your visit and your PDF. Files are resized in your browser and are not uploaded to our server.';
+---
+
+<BaseLayout title={title} description={description}>
+  <main id="main" class="copy legal">
+    <h1>Privacy Policy</h1>
+    <p class="legal-meta">Effective date: 21 October 2026</p>
+    <p>
+      This policy explains what happens when you use ispdf at <a href="https://ispdf.org/">ispdf.org</a>. It matches how
+      the site works today: the resize tool runs in your browser, and we do not ask you to create an account.
+    </p>
+
+    <h2>Who we are</h2>
+    <p>
+      The site is operated as ispdf. For privacy questions, email
+      <a href="mailto:contact@ispdf.org">contact@ispdf.org</a>.
+    </p>
+
+    <h2>Your PDF</h2>
+    <p>
+      When you resize a PDF, the file is read and processed on your device. The document is not uploaded to an ispdf
+      server, and we do not receive its contents, file name, or the text inside it. The resized file is created in your
+      browser for you to download. Closing or reloading the page clears that working copy from the page.
+    </p>
+    <p>
+      Because the file stays on your device, we cannot recover it for you later, and we do not use PDF contents to train
+      models or for advertising.
+    </p>
+
+    <h2>Information from a normal visit</h2>
+    <p>
+      Loading the website still contacts the host that serves ispdf.org. Like most sites, that host may record standard
+      connection data needed to deliver the pages and to limit abuse. That can include your IP address, the date and
+      time, the browser type, and the address of the page you requested, such as the homepage or this policy.
+    </p>
+    <p>
+      Those logs are about the web request. They do not include the PDF you select in the tool. ispdf does not use them
+      to build a marketing profile. We do not control the host’s exact retention period. The host keeps logs for its
+      ordinary security and operations needs.
+    </p>
+
+    <h2>Cookies</h2>
+    <p>
+      ispdf does not set analytics cookies or advertising cookies, and the tool does not use cookies to remember you.
+      We do not run a sign-in system. If we later add an optional measurement tool or advertising, this policy will be
+      updated before that change affects the site.
+    </p>
+
+    <h2>What we do not collect</h2>
+    <p>
+      We do not ask for your name, email address, or payment details to use the resize tool. We do not sell personal
+      information. We do not receive the contents of your PDF, so we cannot share those contents with anyone else.
+    </p>
+
+    <h2>Your rights</h2>
+    <p>
+      Depending on where you live, you may have the right to ask what personal information we hold, to correct it, to
+      delete it, or to object to certain uses, and you may be able to complain to a data-protection authority. The
+      information described above is limited to ordinary hosting logs. Email
+      <a href="mailto:contact@ispdf.org">contact@ispdf.org</a> and we will respond.
+    </p>
+
+    <h2>Children</h2>
+    <p>
+      ispdf is a general document tool. It is not directed at children, and we do not knowingly collect personal
+      information from them.
+    </p>
+
+    <h2>Changes</h2>
+    <p>
+      If this policy changes, the updated version will be posted on this page with a new effective date. Continued use
+      of the site after that date means the new policy applies to later visits.
+    </p>
+  </main>
+</BaseLayout>

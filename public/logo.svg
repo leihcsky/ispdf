@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 168 32">
+  <rect width="32" height="32" rx="8" fill="#0b6e4f"/>
+  <path fill="#f7f3ea" d="M7 6h12l7 7v13a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z"/>
+  <path fill="#0b6e4f" d="M19 6l7 7h-7z"/>
+  <path fill="none" stroke="#0b6e4f" stroke-width="2.25" stroke-linecap="square" d="M10 22h6.5M10 22V15.5"/>
+  <text x="42" y="24.5" font-family="Georgia, 'Iowan Old Style', 'Palatino Linotype', serif" font-size="26">
+    <tspan fill="#0b6e4f">i</tspan><tspan fill="#1c1915">spdf</tspan>
+  </text>
+</svg>

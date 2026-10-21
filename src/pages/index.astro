@@ -1,0 +1,115 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import ResizeApp from '../components/resize/ResizeApp';
+import { faqs, pageDescription, pageTitle } from '../content/faq';
+
+const siteUrl = Astro.site ?? new URL('https://ispdf.org/');
+const brandSchema = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    {
+      '@type': 'WebSite',
+      name: 'ispdf',
+      url: new URL('/', siteUrl).href,
+    },
+    {
+      '@type': 'Organization',
+      name: 'ispdf',
+      url: new URL('/', siteUrl).href,
+      logo: {
+        '@type': 'ImageObject',
+        url: new URL('/logo.png', siteUrl).href,
+        width: 512,
+        height: 512,
+      },
+      email: 'contact@ispdf.org',
+    },
+  ],
+};
+
+const faqSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'FAQPage',
+  mainEntity: faqs.map((item) => ({
+    '@type': 'Question',
+    name: item.question,
+    acceptedAnswer: {
+      '@type': 'Answer',
+      text: item.answer,
+    },
+  })),
+};
+---
+
+<BaseLayout title={pageTitle} description={pageDescription}>
+  <main id="main">
+    <section class="hero" id="tool">
+      <h1>Resize PDF Pages Online for Free</h1>
+      <p class="intro">
+        Change your PDF page size to A4, A3, A5, Letter, Legal, or custom dimensions. Choose how your content fits the
+        new page, then download your resized PDF.
+      </p>
+      <ResizeApp client:load />
+      <p class="privacy">Your PDF is processed locally in your browser and is not uploaded to our server.</p>
+      <noscript>
+        <p class="alert">This tool needs JavaScript to resize a PDF in your browser. The guide below still explains how it works.</p>
+      </noscript>
+    </section>
+
+    <section class="copy">
+      <h2>How to Resize a PDF</h2>
+      <ol>
+        <li>Choose a PDF. It is read in your browser and is not sent to a server.</li>
+        <li>Pick a paper size, or enter a width and height.</li>
+        <li>Choose how the content should fit. Fit is the usual choice.</li>
+        <li>Click <strong>Resize PDF</strong> and download the file.</li>
+      </ol>
+
+      <h2>Page Size, Not File Size</h2>
+      <p>
+        “Resize PDF” is used for two different jobs. One is changing the paper size, such as A4 or Letter. The other is
+        making the file smaller in megabytes. This tool does the first. The download is not aimed at a KB or MB target,
+        and it may be about the same size as the original.
+      </p>
+
+      <h2>Change PDF Page Size</h2>
+      <p>
+        Choose A3, A4, A5, Letter, Legal, or Tabloid, or enter a custom width and height in millimetres, centimetres, or
+        inches. Portrait and landscape swap those dimensions. A Letter file can be resized to A4 for printing outside
+        the US. Every page uses the one size you select, including a file whose pages started at different sizes.
+      </p>
+
+      <h2>Choose How Content Fits</h2>
+      <p>The paper size and the placement of the content are separate settings. Fit is selected by default.</p>
+      <ul>
+        <li><strong>Fit</strong> scales the page evenly so everything stays visible. One side may be left blank.</li>
+        <li><strong>Fill</strong> scales the page evenly until it covers the new size. Edges can be cut off.</li>
+        <li><strong>Stretch</strong> fills the width and height separately, so text and images can look distorted.</li>
+      </ul>
+
+      <h2>Resize Pages in Your Browser</h2>
+      <p>
+        The file stays on your device while the pages are resized. Text remains text, so it can still be selected;
+        pages are not replaced by pictures. Photos that are already in the PDF are scaled with the page. Files over 20
+        MB are not accepted. Password-protected, damaged, or unusually complex PDFs stop with an explanation instead of
+        a broken download.
+      </p>
+    </section>
+
+    <section class="copy" id="faq">
+      <h2>Questions</h2>
+      <div class="faq-list">
+        {
+          faqs.map((item) => (
+            <article>
+              <h3>{item.question}</h3>
+              <p>{item.answer}</p>
+            </article>
+          ))
+        }
+      </div>
+    </section>
+  </main>
+  <script type="application/ld+json" set:html={JSON.stringify(brandSchema)} />
+  <script type="application/ld+json" set:html={JSON.stringify(faqSchema)} />
+</BaseLayout>
