@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { ResizeError, isResizeError, messages } from '../../lib/pdf/errors';
+import { fileSizeMb, trackEvent } from '../../lib/analytics';
+import { ResizeError, isResizeError, messages, type ResizeErrorCode } from '../../lib/pdf/errors';
 import { resizedFilename, validateSelectedFile } from '../../lib/pdf/files';
 import { inspectPdfInBrowser, resizePdfInBrowser } from '../../lib/pdf/client';
 import { defaultSettings, resolveTargetSize, type ResizeSettings } from '../../lib/pdf/paperSizes';
@@ -60,13 +61,33 @@ export default function ResizeApp() {
   }
 
   function resizeAnother() {
+    trackEvent('resize_another', resizeParams());
     returnToUpload.current = true;
     removeFile();
+  }
+
+  function resizeParams() {
+    return {
+      paper_size: settings.preset,
+      orientation: settings.orientation,
+      fit_mode: settings.mode,
+      ...(settings.preset === 'custom'
+        ? {
+            size_unit: settings.customUnit,
+            custom_width: Number.isFinite(settings.customWidth) ? settings.customWidth : undefined,
+            custom_height: Number.isFinite(settings.customHeight) ? settings.customHeight : undefined,
+          }
+        : {}),
+      page_count: pageCount ?? undefined,
+      file_size_mb: file ? fileSizeMb(file.size) : undefined,
+    };
   }
 
   async function acceptFile(next: File) {
     const request = requestId.current + 1;
     requestId.current = request;
+    const size = { file_size_mb: fileSizeMb(next.size) };
+    trackEvent('select_file', size);
     setFile(next);
     setPageCount(null);
     setFileError(null);
@@ -83,18 +104,28 @@ export default function ResizeApp() {
       setPageCount(info.pageCount);
       setPhase('ready');
       setStatus('');
+      trackEvent('file_ready', { ...size, page_count: info.pageCount });
     } catch (caught) {
       if (request !== requestId.current) return;
       setPageCount(null);
       setPhase('error');
       setStatus('');
       setFileError(caught instanceof ResizeError ? caught.message : messages.corrupt);
+      trackEvent('file_rejected', {
+        ...size,
+        error_code: caught instanceof ResizeError ? caught.code : 'corrupt',
+      });
     }
+  }
+
+  function failureCode(caught: unknown, fallback: ResizeErrorCode): ResizeErrorCode {
+    return caught instanceof ResizeError ? caught.code : fallback;
   }
 
   async function resize() {
     if (phase === 'processing') return;
     if (!file || fileError) {
+      trackEvent('resize_failed', { error_code: 'no_file' });
       setPhase('error');
       setFileError(fileError ?? messages.noFile);
       setStatus('');
@@ -104,6 +135,7 @@ export default function ResizeApp() {
     try {
       resolveTargetSize(settings);
     } catch (caught) {
+      trackEvent('resize_failed', { ...resizeParams(), error_code: failureCode(caught, 'invalid_size') });
       setPhase('error');
       setStatus('');
       setActionError(caught instanceof ResizeError ? caught.message : messages.invalidSize);
@@ -112,6 +144,8 @@ export default function ResizeApp() {
 
     const request = requestId.current + 1;
     requestId.current = request;
+    const params = resizeParams();
+    trackEvent('resize_pdf', params);
     setPhase('processing');
     setActionError(null);
     replaceResult(null);
@@ -128,12 +162,18 @@ export default function ResizeApp() {
       replaceResult({ url, filename: resizedFilename(file.name) });
       setStatus('Complete');
       setPhase('complete');
+      trackEvent('resize_complete', { ...params, output_size_mb: fileSizeMb(output.byteLength) });
     } catch (caught) {
       if (request !== requestId.current) return;
       setPhase('error');
       setStatus('');
       setActionError(isResizeError(caught) ? caught.message : messages.processFailed);
+      trackEvent('resize_failed', { ...params, error_code: failureCode(caught, 'process_failed') });
     }
+  }
+
+  function downloadResult() {
+    trackEvent('download_pdf', resizeParams());
   }
 
   const processing = phase === 'processing';
@@ -147,7 +187,14 @@ export default function ResizeApp() {
         fileError={fileError}
         disabled={processing}
         onFile={acceptFile}
-        onRemove={removeFile}
+        onRemove={() => {
+          trackEvent('remove_file', {
+            page_count: pageCount ?? undefined,
+            file_size_mb: file ? fileSizeMb(file.size) : undefined,
+            had_error: Boolean(fileError),
+          });
+          removeFile();
+        }}
       />
       <ResizeSettingsPanel
         settings={settings}
@@ -173,7 +220,12 @@ export default function ResizeApp() {
         </p>
       ) : null}
       {phase === 'complete' && result ? (
-        <ResultPanel url={result.url} filename={result.filename} onReset={resizeAnother} />
+        <ResultPanel
+          url={result.url}
+          filename={result.filename}
+          onDownload={downloadResult}
+          onReset={resizeAnother}
+        />
       ) : null}
     </div>
   );
